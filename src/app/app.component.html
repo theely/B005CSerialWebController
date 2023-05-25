@@ -1,0 +1,55 @@
+
+
+
+
+
+<h1>AutoMower Manual Drive</h1>
+
+
+<div *ngIf="!isConnnected">
+
+
+  <mat-card class="setting-card">
+    <mat-card-title>Connect Blaster</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+
+    <button mat-raised-button color="primary" (click)="connect($event)">Select Device</button>
+
+
+  </mat-card>
+
+
+</div>
+
+
+
+
+<div>
+
+  <button mat-raised-button color="primary" (click)="arm($event)">ARM</button>
+  <button mat-raised-button color="primary" (click)="halt($event)">HALT</button>
+
+
+  <table style="width: 400px; height: 400px;">
+    <tbody>
+
+    <tr>
+    <td>&nbsp;</td>
+    <td><button mat-raised-button color="primary" (click)="forward($event)">UP</button></td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td><button mat-raised-button color="primary" (click)="left($event)">LEFT</button></td>
+    <td>&nbsp;</td>
+    <td><button mat-raised-button color="primary" (click)="right($event)">RIGHT</button></td>
+    </tr>
+    <tr>
+    <td>&nbsp;</td>
+    <td><button mat-raised-button color="primary" (click)="backward($event)">DOWN</button></td>
+    <td>&nbsp;</td>
+    </tr>
+    </tbody>
+    </table>
+     
+  
+</div>
