@@ -38,7 +38,7 @@ isFullAuto:any;
  //Web serial doc: https://web.dev/serial/
 
 async forward(event: Event) {
-    await this.writer.write("speed:0.3 0.3\n");
+    await this.writer.write("speed:0.1 0.1\n");
     console.log("forward");
 }
 
@@ -67,6 +67,8 @@ async halt(event: Event) {
   console.log("halt");
 }
 
+
+
 async connect(event: Event) {
   let webSerial: any;
   webSerial = window.navigator;
@@ -86,13 +88,14 @@ if (webSerial && webSerial.serial) {
     const { usbProductId, usbVendorId } = port.getInfo();
     console.log(usbVendorId);
 
-    await port.open({ baudRate: 9600,databits: 8,  stopbits: 1, parity: "none" ,flowControl: "none"});
+    await port.open({ baudRate: 115200,databits: 8,  stopbits: 1, parity: "none" ,flowControl: "none"});
 
-    const [appReadable, devReadable] = port.readable.tee();
+    //const [appReadable, devReadable] = port.readable.tee();
 
-    const textDecoder = new TextDecoderStream();
-    const readableStreamClosed = appReadable.pipeTo(textDecoder.writable);
-    this.reader = textDecoder.readable.pipeThrough(new TransformStream(new LineBreakTransformer())).getReader();
+    //const textDecoder = new TextDecoderStream();
+    //const readableStreamClosed = appReadable.pipeTo(textDecoder.writable);
+    //this.reader = textDecoder.readable.pipeThrough(new TransformStream(new LineBreakTransformer())).getReader();
+
 
     const textEncoder = new TextEncoderStream();
     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
@@ -117,6 +120,29 @@ if (webSerial && webSerial.serial) {
 
 //await port.close();
 
+while (port.readable) {
+  const reader = port.readable.getReader();
+  const decoder = new TextDecoder("utf-8");
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        console.log("done");
+        break;
+      }
+      
+      console.log(decoder.decode(value));
+    }
+  } catch (error) {
+    // Handle |error|...
+  } finally {
+    reader.releaseLock();
+  }
+}
+console.log("disconnected");
+
+
+
 } else {
   alert('Serial not supported');
 }
@@ -124,16 +150,8 @@ if (webSerial && webSerial.serial) {
 }
 
 
+
+
+
 }
 
-if (typeof Worker !== 'undefined') {
-  // Create a new
-  const worker = new Worker(new URL('./app.worker', import.meta.url));
-  worker.onmessage = ({ data }) => {
-    console.log(`page got message: ${data}`);
-  };
-  worker.postMessage('hello');
-} else {
-  // Web Workers are not supported in this environment.
-  // You should add a fallback so that your program still executes correctly.
-}

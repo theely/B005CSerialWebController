@@ -30,8 +30,7 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": [],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -99,8 +98,7 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": [],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "scripts": []
           }
         }
       }
