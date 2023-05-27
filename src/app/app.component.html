@@ -35,17 +35,17 @@
 
     <tr>
     <td>&nbsp;</td>
-    <td><button mat-raised-button color="primary" (click)="forward($event)">UP</button></td>
+    <td><button mat-raised-button color="primary" (pointerdown)="moveDown('Forward')" (mouseup)="moveUp()" (mouseleave)="moveUp()">UP</button></td>
     <td>&nbsp;</td>
     </tr>
     <tr>
-    <td><button mat-raised-button color="primary" (click)="left($event)">LEFT</button></td>
+    <td><button mat-raised-button color="primary" (pointerdown)="moveDown('Left')" (mouseup)="moveUp()" (mouseleave)="moveUp()">LEFT</button></td>
     <td>&nbsp;</td>
-    <td><button mat-raised-button color="primary" (click)="right($event)">RIGHT</button></td>
+    <td><button mat-raised-button color="primary" (pointerdown)="moveDown('Right')" (mouseup)="moveUp()" (mouseleave)="moveUp()">RIGHT</button></td>
     </tr>
     <tr>
     <td>&nbsp;</td>
-    <td><button mat-raised-button color="primary" (click)="backward($event)">DOWN</button></td>
+    <td><button mat-raised-button color="primary" (pointerdown)="moveDown('Backward')" (mouseup)="moveUp()" (mouseleave)="moveUp()">DOWN</button></td>
     <td>&nbsp;</td>
     </tr>
     </tbody>

@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,OnInit,HostListener } from '@angular/core';
 import { LineBreakTransformer } from './LineBreakTransformer';
 
 
@@ -10,11 +10,15 @@ import { LineBreakTransformer } from './LineBreakTransformer';
 })
 
 
+
 export class AppComponent implements OnInit{
   title = 'configurator';
   reader: any;
   writer: any;
+  move_direction: any;
+  move_timestamp:any;
   isConnnected=false;
+  tap_timeoutHandler:any;
   configuration: { [key: string]: any } = {
                'pusher_pull_time': 60,
                'pusher_push_time': 55,
@@ -31,31 +35,56 @@ isSingleShot:any;
 isBurstShots:any;
 isFullAuto:any;
 
+
+
  ngOnInit() {
 
  }
 
+
+
+ @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if(event.key == 'ArrowDown'){
+      this.move_timestamp = Date.now();
+      this.move_direction = 'Backward';
+    }
+    if(event.key == 'ArrowUp'){
+      this.move_timestamp = Date.now();
+      this.move_direction = 'Forward';
+    }
+    if(event.key == 'ArrowLeft'){
+      this.move_timestamp = Date.now();
+      this.move_direction = 'Left';
+    }
+    if(event.key == 'ArrowRight'){
+      this.move_timestamp = Date.now();
+      this.move_direction = 'Right';
+    }
+  }
+
+
  //Web serial doc: https://web.dev/serial/
 
-async forward(event: Event) {
-    await this.writer.write("speed:0.1 0.1\n");
-    console.log("forward");
+async moveDown(direction: String) {
+  if (this.tap_timeoutHandler) {
+    clearInterval(this.tap_timeoutHandler);
+    this.move_timestamp = 0;
+  }
+  this.tap_timeoutHandler = setInterval(() => {
+    this.move_timestamp = Date.now();
+    this.move_direction = direction;
+    console.log(direction);
+  }, 50);
 }
 
-async backward(event: Event) {
-  await this.writer.write("speed:-0.3 -0.3\n");
-  console.log("backward");
+async moveUp() {
+  if (this.tap_timeoutHandler) {
+    clearInterval(this.tap_timeoutHandler);
+    this.move_timestamp = 0;
+  }
 }
 
-async left(event: Event) {
-  await this.writer.write("speed:0.3 -0.3\n");
-  console.log("left");
-}
-
-async right(event: Event) {
-  await this.writer.write("speed:-0.3 0.3\n");
-  console.log("right");
-}
 
 async arm(event: Event) {
   await this.writer.write("arm\n");
@@ -66,6 +95,7 @@ async halt(event: Event) {
   await this.writer.write("halt\n");
   console.log("halt");
 }
+
 
 
 
@@ -119,6 +149,33 @@ if (webSerial && webSerial.serial) {
 //await writableStreamClosed;
 
 //await port.close();
+
+
+setInterval(()=> { 
+  if(port.writable){
+    var speed_setting = "speed:0 0\n";
+    if(Date.now()-this.move_timestamp < 100){
+      switch (this.move_direction) {
+        case 'Forward':
+          speed_setting = "speed:0.25 0.25\n";
+          break;
+        case 'Backward':
+          speed_setting = "speed:-0.25 -0.25\n";
+          break;
+        case 'Left':
+          speed_setting = "speed:-0.1 0.1\n";
+          break;
+        case 'Right':
+          speed_setting = "speed:0.1 -0.1\n";
+          break;
+        default:
+          speed_setting = "speed:0 0\n";
+      }
+    }
+    this.writer.write(speed_setting);
+    console.log(speed_setting);console.log("\n");
+  }
+ }, 100);
 
 while (port.readable) {
   const reader = port.readable.getReader();
